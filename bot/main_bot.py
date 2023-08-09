@@ -2,7 +2,7 @@ import telebot
 import re
 
 
-TOKEN = "5913351179:AAFT7Ldsf_6WsEzZOhHS4kxhZDTmlauw0I0"
+TOKEN = "Your_Token"
 bot = telebot.TeleBot(TOKEN)
 
 adblockwords = [
