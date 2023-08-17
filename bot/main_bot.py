@@ -2,17 +2,16 @@ import telebot
 import re
 
 
-TOKEN = "Your_Token"
+TOKEN = "your_token"
 bot = telebot.TeleBot(TOKEN)
-
-adblockwords = [
-    'Big city lights',
-    'Faces KBTU',
-    'Codemode',
-    'Codeye',
-    'Altron academy'
-]
+txt_path = 'adblockwords.txt'
 warnings = {}
+
+
+with open(txt_path, 'r') as file:
+    ad_block_word_list = file.readlines()
+ad_block_words = [line.strip() for line in ad_block_word_list]
+print(ad_block_words)
 
 
 @bot.message_handler(commands=['info'])
@@ -22,9 +21,8 @@ def start(message):
     bot.send_message(message.chat.id, "Для добавления нового триггер слова введите '/addword'")
 
 
-
 @bot.message_handler(func=lambda message: len(re.findall(r'\b\w+\b', message.text)) >= 3 and any(
-    re.search(pattern, message.text, re.IGNORECASE) for pattern in adblockwords))
+    re.search(pattern, message.text, re.IGNORECASE) for pattern in ad_block_words))
 def handle_message(message):
     chat_id = message.chat.id
     user_id = message.from_user.id
@@ -56,7 +54,12 @@ def process_new_word(message):
     new_word = message.text.strip()
 
     if new_word:
-        adblockwords.append(new_word)
+        with open(txt_path, 'a') as file:
+            file.write('\n' + new_word)
+        with open(txt_path, 'r') as file:
+            refreshed_list = file.readlines()
+        global ad_block_words
+        ad_block_words = [line.strip() for line in refreshed_list]
         bot.send_message(message.chat.id, f"Слово '{new_word}' было добавлено в триггер лист")
     else:
         bot.send_message(message.chat.id, "Недействительное слово. Введите новое:")
@@ -64,3 +67,4 @@ def process_new_word(message):
 
 if __name__ == '__main__':
     bot.infinity_polling()
+    
