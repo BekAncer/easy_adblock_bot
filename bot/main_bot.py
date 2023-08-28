@@ -33,8 +33,12 @@ def handle_message(message):
     else:
         bot.delete_message(chat_id, message.message_id)
         if user_id in warnings:
-            warnings[user_id] += 1
-            bot.send_message(message.chat.id,f'Пользователю @{user_id} выдано f{warnings[user_id]}/3 предупреждений')
+            if warnings[user_id] < 2:
+                warnings[user_id] += 1
+                bot.send_message(message.chat.id, f'Пользователю @{user_id} выдано {warnings[user_id]}/3 предупреждений')
+            else:
+                bot.kick_chat_member(chat_id, user_id)
+                bot.send_message(message.chat.id,f'пользователь @{user_id} был кикнут в связи с 3 нарушениями')
         else:
             warnings[user_id] = 1
             bot.send_message(message.chat.id,f'Пользователю @{user_id} выдано 1/3 предупреждений')
