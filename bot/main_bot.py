@@ -31,10 +31,13 @@ def handle_message(message):
     if member.status == "administrator" or member.status == "creator":
         bot.send_message(chat_id, 'Sigma')
     else:
+        bot.delete_message(chat_id, message.message_id)
         if user_id in warnings:
             warnings[user_id] += 1
+            bot.send_message(message.chat.id,f'Пользователю @{user_id} выдано f{warnings[user_id]}/3 предупреждений')
         else:
             warnings[user_id] = 1
+            bot.send_message(message.chat.id,f'Пользователю @{user_id} выдано 1/3 предупреждений')
 
 
 @bot.message_handler(commands=['addword'])
